@@ -15,6 +15,14 @@ const productSchema = new mongoose.Schema({
   image: {
     type: String,
   },
+  category: {
+    type: String,
+    default: "Accessories",
+  },
+  featured: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Product = mongoose.model("Product", productSchema);

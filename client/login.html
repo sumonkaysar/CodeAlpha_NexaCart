@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f7f3" />
+    <title>Sign in | NexaCart</title>
+    <link rel="stylesheet" href="css/storefront.css" />
+  </head>
+  <body>
+    <main class="auth-shell">
+      <aside class="auth-story"><a class="brand" href="index.html">Nexa<span class="brand-mark">Cart</span></a><div class="auth-story-copy"><p>Made for the everyday</p><h1>Make room for <em>good things.</em></h1><span>A considered collection of objects worth keeping close.</span></div></aside>
+      <section class="auth-form-side">
+        <p class="auth-top-link">New to NexaCart? <a href="register.html">Create account</a></p>
+        <form class="auth-form" data-auth-form="login">
+          <p class="eyebrow">Welcome back</p><h2>Sign in</h2><p class="auth-intro">Pick up where you left off.</p>
+          <div class="field"><label for="email">Email address</label><input type="email" id="email" name="email" autocomplete="email" placeholder="you@example.com" required /></div>
+          <div class="field"><label for="password">Password</label><input type="password" id="password" name="password" autocomplete="current-password" placeholder="Your password" required /></div>
+          <button class="button button-wide" type="submit">Sign in <span aria-hidden="true">→</span></button>
+          <p class="form-message" role="status" aria-live="polite"></p>
+          <p class="auth-footnote">Your account keeps your orders together and checkout simple.</p>
+        </form>
+      </section>
+    </main>
+    <script src="js/store.js"></script>
+  </body>
+</html>

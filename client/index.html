@@ -4,35 +4,109 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f7f3" />
-    <meta name="description" content="Thoughtful everyday objects, selected by NexaCart." />
+    <meta
+      name="description"
+      content="Thoughtful everyday objects, selected by NexaCart."
+    />
     <title>NexaCart | Everyday, considered</title>
     <link rel="stylesheet" href="css/storefront.css" />
   </head>
   <body>
-    <div class="announcement"><strong>Complimentary delivery</strong><span>on every order</span></div>
+    <div class="announcement">
+      <strong>Complimentary delivery</strong><span>on every order</span>
+    </div>
     <header class="site-header">
-      <a class="brand" href="index.html" aria-label="NexaCart home">Nexa<span class="brand-mark">Cart</span></a>
-      <nav class="main-nav" aria-label="Main navigation"><a href="index.html#shop">Shop</a><a href="index.html#story">Our point of view</a></nav>
+      <a class="brand" href="index.html" aria-label="NexaCart home"
+        >Nexa<span class="brand-mark">Cart</span></a
+      >
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="index.html#shop">Shop</a
+        ><a href="index.html#story">Our point of view</a>
+      </nav>
       <div class="header-actions">
-        <form class="search-form" id="header-search"><input type="search" name="q" id="product-search" placeholder="Find your next thing" aria-label="Search products" /></form>
-        <div id="user-nav" class="account-actions"><a href="login.html">Sign in</a><a href="register.html">Join</a></div>
-        <a class="cart-link" href="cart.html">Bag <span>(<span id="cart-count">0</span>)</span></a>
+        <form class="search-form" id="header-search">
+          <input
+            type="search"
+            name="q"
+            id="product-search"
+            placeholder="Find your next thing"
+            aria-label="Search products"
+          />
+        </form>
+        <div id="user-nav" class="account-actions">
+          <a href="login.html">Sign in</a><a href="register.html">Join</a>
+        </div>
+        <a class="cart-link" href="cart.html"
+          >Bag <span>(<span id="cart-count">0</span>)</span></a
+        >
       </div>
     </header>
     <main class="page-shell">
       <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-copy"><p class="eyebrow">A better kind of everyday</p><h1 id="hero-title">Good things.<br /><em>Chosen well.</em></h1><p>Useful, beautiful objects for the way you live now. Less noise, more of what matters.</p><a class="button" href="#shop">Explore the collection <span aria-hidden="true">↘</span></a></div>
-        <div class="hero-image"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1500&q=90" alt="Carefully designed over-ear headphones" /><span class="hero-caption">Objects for everyday living</span></div>
+        <div class="hero-copy">
+          <p class="eyebrow">A better kind of everyday</p>
+          <h1 id="hero-title">Good things.<br /><em>Chosen well.</em></h1>
+          <p>
+            Useful, beautiful objects for the way you live now. Less noise, more
+            of what matters.
+          </p>
+          <a class="button" href="#shop"
+            >Explore the collection <span aria-hidden="true">↘</span></a
+          >
+        </div>
+        <div class="hero-image">
+          <img
+            src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1500&q=90"
+            alt="Carefully designed over-ear headphones"
+          /><span class="hero-caption">Objects for everyday living</span>
+        </div>
       </section>
       <section id="shop" aria-labelledby="shop-title">
-        <div class="section-heading"><div><p class="eyebrow">The collection</p><h2 id="shop-title">Keepers, not clutter.</h2><p>A small edit of things that earn their place.</p></div><span class="catalog-meta" id="product-count" aria-live="polite">Loading collection</span></div>
-        <div class="filter-row" id="category-filter" aria-label="Filter by category"></div>
-        <div class="catalog-toolbar"><span class="catalog-meta">Designed for daily rituals</span><label for="product-sort">Sort by <select id="product-sort"><option value="featured">Featured</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name</option></select></label></div>
-        <div id="product-list" class="product-grid" aria-live="polite"><div class="loading-state">Finding the good things…</div></div>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">The collection</p>
+            <h2 id="shop-title">Keepers, not clutter.</h2>
+            <p>A small edit of things that earn their place.</p>
+          </div>
+          <span class="catalog-meta" id="product-count" aria-live="polite"
+            >Loading collection</span
+          >
+        </div>
+        <div
+          class="filter-row"
+          id="category-filter"
+          aria-label="Filter by category"
+        ></div>
+        <div class="catalog-toolbar">
+          <span class="catalog-meta">Designed for daily rituals</span
+          ><label for="product-sort"
+            >Sort by
+            <select id="product-sort">
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+              <option value="name">Name</option>
+            </select></label
+          >
+        </div>
+        <div id="product-list" class="product-grid" aria-live="polite">
+          <div class="loading-state">Finding the good things…</div>
+        </div>
       </section>
-      <section class="editorial-strip" id="story"><h2>Less, but <em>more meaningful.</em></h2><p>We believe the things around us should work beautifully, last well, and feel good to bring home. Every NexaCart pick starts with that simple idea.</p></section>
+      <section class="editorial-strip" id="story">
+        <h2>Less, but <em>more meaningful.</em></h2>
+        <p>
+          We believe the things around us should work beautifully, last well,
+          and feel good to bring home. Every NexaCart pick starts with that
+          simple idea.
+        </p>
+      </section>
     </main>
-    <footer class="site-footer"><strong>Nexa<span class="brand-mark">Cart</span></strong><span>Thoughtful things for the everyday.</span><span>© 2026 NexaCart</span></footer>
+    <footer class="site-footer">
+      <strong>Nexa<span class="brand-mark">Cart</span></strong
+      ><span>Thoughtful things for the everyday.</span
+      ><span>© 2026 NexaCart</span>
+    </footer>
     <script src="js/store.js"></script>
   </body>
 </html>

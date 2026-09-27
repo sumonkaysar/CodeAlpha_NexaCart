@@ -5,6 +5,11 @@ const UploadController = require("./upload.controller");
 
 const UploadRouter = express.Router();
 
-UploadRouter.post("/image", verifyAdmin, uploadImage, UploadController.uploadImage);
+UploadRouter.post(
+  "/image",
+  verifyAdmin,
+  uploadImage,
+  UploadController.uploadImage,
+);
 
 module.exports = UploadRouter;

@@ -1,6 +1,7 @@
 const API_BASE_URL = "http://localhost:5000/api";
 const CART_KEY = "nexacart_cart";
-const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=1200&q=80";
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=1200&q=80";
 let allProducts = [];
 let activeCategory = "All";
 let toastTimer;
@@ -21,27 +22,45 @@ function setCart(cart) {
 }
 
 function updateCartCount() {
-  const count = getCart().reduce((sum, item) => sum + Number(item.quantity || 0), 0);
-  document.querySelectorAll("#cart-count").forEach((element) => { element.textContent = count; });
+  const count = getCart().reduce(
+    (sum, item) => sum + Number(item.quantity || 0),
+    0,
+  );
+  document.querySelectorAll("#cart-count").forEach((element) => {
+    element.textContent = count;
+  });
 }
 
 function escapeHTML(value = "") {
-  return String(value).replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
-  })[character]);
+  return String(value).replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[character],
+  );
 }
 
 function safeImage(value) {
   try {
     const image = new URL(value || FALLBACK_IMAGE, window.location.href);
-    return ["https:", "http:"].includes(image.protocol) ? image.href : FALLBACK_IMAGE;
+    return ["https:", "http:"].includes(image.protocol)
+      ? image.href
+      : FALLBACK_IMAGE;
   } catch {
     return FALLBACK_IMAGE;
   }
 }
 
 function money(amount) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(amount) || 0);
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(Number(amount) || 0);
 }
 
 function showToast(message) {
@@ -55,7 +74,9 @@ function showToast(message) {
   toast.textContent = message;
   toast.hidden = false;
   window.clearTimeout(toastTimer);
-  toastTimer = window.setTimeout(() => { toast.hidden = true; }, 2600);
+  toastTimer = window.setTimeout(() => {
+    toast.hidden = true;
+  }, 2600);
 }
 
 function checkAuth() {
@@ -64,7 +85,10 @@ function checkAuth() {
   const username = localStorage.getItem("nexacart_username");
   const role = localStorage.getItem("nexacart_role");
   if (nav && token) {
-    const adminLink = role === "admin" && !document.getElementById("product-form") ? '<a href="admin.html">Manage</a>' : "";
+    const adminLink =
+      role === "admin" && !document.getElementById("product-form")
+        ? '<a href="admin.html">Manage</a>'
+        : "";
     nav.innerHTML = `${adminLink}<span class="account-name">Hi, ${escapeHTML(username || "there")}</span><button class="text-button" type="button" data-action="logout">Sign out</button>`;
   }
 }
@@ -79,7 +103,10 @@ function logout() {
 async function fetchJSON(url, options = {}) {
   const response = await fetch(url, options);
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || data.message || "Something went wrong. Please try again.");
+  if (!response.ok)
+    throw new Error(
+      data.error || data.message || "Something went wrong. Please try again.",
+    );
   return data;
 }
 
@@ -88,7 +115,9 @@ async function uploadImage(file) {
   formData.append("image", file);
   return fetchJSON(`${API_BASE_URL}/uploads/image`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${localStorage.getItem("nexacart_token")}` },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("nexacart_token")}`,
+    },
     body: formData,
   });
 }
@@ -96,15 +125,25 @@ async function uploadImage(file) {
 function renderCategories(products) {
   const container = document.getElementById("category-filter");
   if (!container) return;
-  const categories = ["All", ...new Set(products.map((product) => product.category).filter(Boolean))];
+  const categories = [
+    "All",
+    ...new Set(products.map((product) => product.category).filter(Boolean)),
+  ];
   if (!categories.includes(activeCategory)) activeCategory = "All";
-  container.innerHTML = categories.map((category) => `<button class="filter-button${category === activeCategory ? " is-active" : ""}" type="button" data-category="${escapeHTML(category)}" aria-pressed="${category === activeCategory}">${escapeHTML(category)}</button>`).join("");
+  container.innerHTML = categories
+    .map(
+      (category) =>
+        `<button class="filter-button${category === activeCategory ? " is-active" : ""}" type="button" data-category="${escapeHTML(category)}" aria-pressed="${category === activeCategory}">${escapeHTML(category)}</button>`,
+    )
+    .join("");
 }
 
 function productCard(product, index) {
   const id = escapeHTML(product._id || product.id);
   const category = escapeHTML(product.category || "Objects");
-  const featured = product.featured ? '<span class="product-badge">Nexa pick</span>' : "";
+  const featured = product.featured
+    ? '<span class="product-badge">Nexa pick</span>'
+    : "";
   const detail = `product.html?id=${encodeURIComponent(product._id || product.id)}`;
   return `<article class="product-card" style="animation-delay:${Math.min(index * 45, 240)}ms">
     <a class="product-visual" href="${detail}" aria-label="View ${escapeHTML(product.name)}"><img src="${escapeHTML(safeImage(product.image))}" alt="${escapeHTML(product.name)}" loading="lazy">${featured}</a>
@@ -116,20 +155,36 @@ function productCard(product, index) {
 function renderProducts() {
   const container = document.getElementById("product-list");
   if (!container) return;
-  const query = (document.getElementById("product-search")?.value || "").trim().toLowerCase();
+  const query = (document.getElementById("product-search")?.value || "")
+    .trim()
+    .toLowerCase();
   const sort = document.getElementById("product-sort")?.value || "featured";
   let products = allProducts.filter((product) => {
-    const matchesCategory = activeCategory === "All" || product.category === activeCategory;
-    const matchesQuery = `${product.name} ${product.description || ""} ${product.category || ""}`.toLowerCase().includes(query);
+    const matchesCategory =
+      activeCategory === "All" || product.category === activeCategory;
+    const matchesQuery =
+      `${product.name} ${product.description || ""} ${product.category || ""}`
+        .toLowerCase()
+        .includes(query);
     return matchesCategory && matchesQuery;
   });
-  if (sort === "price-asc") products.sort((first, second) => first.price - second.price);
-  if (sort === "price-desc") products.sort((first, second) => second.price - first.price);
-  if (sort === "name") products.sort((first, second) => first.name.localeCompare(second.name));
-  if (sort === "featured") products.sort((first, second) => Number(Boolean(second.featured)) - Number(Boolean(first.featured)));
+  if (sort === "price-asc")
+    products.sort((first, second) => first.price - second.price);
+  if (sort === "price-desc")
+    products.sort((first, second) => second.price - first.price);
+  if (sort === "name")
+    products.sort((first, second) => first.name.localeCompare(second.name));
+  if (sort === "featured")
+    products.sort(
+      (first, second) =>
+        Number(Boolean(second.featured)) - Number(Boolean(first.featured)),
+    );
   const count = document.getElementById("product-count");
-  if (count) count.textContent = `${products.length} ${products.length === 1 ? "object" : "objects"}`;
-  container.innerHTML = products.length ? products.map(productCard).join("") : '<div class="empty-state"><h3>No objects found</h3><p>Try another search or category.</p></div>';
+  if (count)
+    count.textContent = `${products.length} ${products.length === 1 ? "object" : "objects"}`;
+  container.innerHTML = products.length
+    ? products.map(productCard).join("")
+    : '<div class="empty-state"><h3>No objects found</h3><p>Try another search or category.</p></div>';
 }
 
 async function loadProducts() {
@@ -149,7 +204,15 @@ function addToCart(product, quantity = 1) {
   const cart = getCart();
   const item = cart.find((entry) => String(entry.id) === id);
   if (item) item.quantity = Math.min(50, Number(item.quantity) + quantity);
-  else cart.push({ id, name: product.name, price: Number(product.price), image: product.image || "", category: product.category || "", quantity: Math.min(50, quantity) });
+  else
+    cart.push({
+      id,
+      name: product.name,
+      price: Number(product.price),
+      image: product.image || "",
+      category: product.category || "",
+      quantity: Math.min(50, quantity),
+    });
   setCart(cart);
   showToast(`${product.name} added to your bag`);
 }
@@ -159,11 +222,14 @@ async function loadProductDetail() {
   if (!container) return;
   const productId = new URLSearchParams(window.location.search).get("id");
   if (!productId) {
-    container.innerHTML = '<div class="empty-state"><h3>Product not found</h3><p>Choose an object from the shop to view its details.</p></div>';
+    container.innerHTML =
+      '<div class="empty-state"><h3>Product not found</h3><p>Choose an object from the shop to view its details.</p></div>';
     return;
   }
   try {
-    const product = await fetchJSON(`${API_BASE_URL}/products/${encodeURIComponent(productId)}`);
+    const product = await fetchJSON(
+      `${API_BASE_URL}/products/${encodeURIComponent(productId)}`,
+    );
     container.innerHTML = `<div class="detail-layout"><div class="detail-image"><img src="${escapeHTML(safeImage(product.image))}" alt="${escapeHTML(product.name)}"></div><section class="detail-copy"><p class="eyebrow">${escapeHTML(product.category || "NexaCart Objects")}</p><h1>${escapeHTML(product.name)}</h1><p class="detail-price">${money(product.price)}</p><p class="detail-description">${escapeHTML(product.description || "A considered everyday essential, selected for quality, function, and lasting design.")}</p><div class="detail-purchase"><div class="quantity-control"><button type="button" data-detail-quantity="-1" aria-label="Decrease quantity">−</button><output id="detail-quantity">1</output><button type="button" data-detail-quantity="1" aria-label="Increase quantity">+</button></div><button class="button" type="button" data-detail-add="${escapeHTML(product._id)}">Add to bag</button></div><hr class="detail-divider"><div class="detail-assurance"><span>Thoughtfully selected, made to be used</span><span>Secure checkout with your NexaCart account</span><span>Questions? We are here to help.</span></div></section></div>`;
     container.dataset.product = JSON.stringify(product);
   } catch (error) {
@@ -177,13 +243,22 @@ function renderCart() {
   const cart = getCart();
   const summary = document.getElementById("cart-summary");
   if (!cart.length) {
-    container.innerHTML = '<div class="empty-state"><h3>Your bag is taking a breather</h3><p>Find something considered for your everyday.</p><a class="button" href="index.html#shop">Explore the collection</a></div>';
+    container.innerHTML =
+      '<div class="empty-state"><h3>Your bag is taking a breather</h3><p>Find something considered for your everyday.</p><a class="button" href="index.html#shop">Explore the collection</a></div>';
     if (summary) summary.hidden = true;
     return;
   }
   if (summary) summary.hidden = false;
-  container.innerHTML = cart.map((item) => `<article class="cart-line"><a href="product.html?id=${encodeURIComponent(item.id)}"><img src="${escapeHTML(safeImage(item.image))}" alt="${escapeHTML(item.name)}"></a><div><h2><a href="product.html?id=${encodeURIComponent(item.id)}">${escapeHTML(item.name)}</a></h2><p>${escapeHTML(item.category || "NexaCart object")}</p><div class="cart-line-controls"><div class="quantity-control compact"><button type="button" data-cart-action="decrease" data-id="${escapeHTML(item.id)}" aria-label="Decrease ${escapeHTML(item.name)} quantity">−</button><output>${Number(item.quantity)}</output><button type="button" data-cart-action="increase" data-id="${escapeHTML(item.id)}" aria-label="Increase ${escapeHTML(item.name)} quantity">+</button></div><button class="remove-button" type="button" data-cart-action="remove" data-id="${escapeHTML(item.id)}">Remove</button></div></div><span class="cart-line-price">${money(item.price * item.quantity)}</span></article>`).join("");
-  const subtotal = cart.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity), 0);
+  container.innerHTML = cart
+    .map(
+      (item) =>
+        `<article class="cart-line"><a href="product.html?id=${encodeURIComponent(item.id)}"><img src="${escapeHTML(safeImage(item.image))}" alt="${escapeHTML(item.name)}"></a><div><h2><a href="product.html?id=${encodeURIComponent(item.id)}">${escapeHTML(item.name)}</a></h2><p>${escapeHTML(item.category || "NexaCart object")}</p><div class="cart-line-controls"><div class="quantity-control compact"><button type="button" data-cart-action="decrease" data-id="${escapeHTML(item.id)}" aria-label="Decrease ${escapeHTML(item.name)} quantity">−</button><output>${Number(item.quantity)}</output><button type="button" data-cart-action="increase" data-id="${escapeHTML(item.id)}" aria-label="Increase ${escapeHTML(item.name)} quantity">+</button></div><button class="remove-button" type="button" data-cart-action="remove" data-id="${escapeHTML(item.id)}">Remove</button></div></div><span class="cart-line-price">${money(item.price * item.quantity)}</span></article>`,
+    )
+    .join("");
+  const subtotal = cart.reduce(
+    (sum, item) => sum + Number(item.price) * Number(item.quantity),
+    0,
+  );
   document.getElementById("cart-subtotal").textContent = money(subtotal);
   document.getElementById("cart-total").textContent = money(subtotal);
 }
@@ -203,9 +278,22 @@ async function checkout() {
   button.textContent = "Placing order…";
   message.textContent = "";
   try {
-    const data = await fetchJSON(`${API_BASE_URL}/orders`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ items: cart.map((item) => ({ productId: item.id, quantity: Number(item.quantity) })) }) });
+    const data = await fetchJSON(`${API_BASE_URL}/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        items: cart.map((item) => ({
+          productId: item.id,
+          quantity: Number(item.quantity),
+        })),
+      }),
+    });
     setCart([]);
-    document.getElementById("cart-items").innerHTML = `<div class="empty-state"><p class="eyebrow">Order confirmed</p><h3>Thank you for your order.</h3><p>Confirmation ${escapeHTML(data.orderId)} is now being prepared.</p><a class="button" href="index.html#shop">Continue shopping</a></div>`;
+    document.getElementById("cart-items").innerHTML =
+      `<div class="empty-state"><p class="eyebrow">Order confirmed</p><h3>Thank you for your order.</h3><p>Confirmation ${escapeHTML(data.orderId)} is now being prepared.</p><a class="button" href="index.html#shop">Continue shopping</a></div>`;
     document.getElementById("cart-summary").hidden = true;
   } catch (error) {
     message.textContent = error.message;
@@ -229,11 +317,17 @@ async function submitAuth(form) {
   button.textContent = kind === "login" ? "Signing in…" : "Creating account…";
   setFormMessage(form, "");
   try {
-    const data = await fetchJSON(`${API_BASE_URL}/auth/${kind}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(values) });
+    const data = await fetchJSON(`${API_BASE_URL}/auth/${kind}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
     if (kind === "register") {
       setFormMessage(form, "Your account is ready. Sign in to continue.", true);
       form.reset();
-      window.setTimeout(() => { window.location.href = "login.html"; }, 900);
+      window.setTimeout(() => {
+        window.location.href = "login.html";
+      }, 900);
       return;
     }
     localStorage.setItem("nexacart_token", data.token);
@@ -306,7 +400,9 @@ function initializeProductAdmin() {
     previewName.textContent = file.name;
     previewObjectUrl = URL.createObjectURL(file);
     previewImage.src = previewObjectUrl;
-    setMessage("Image selected. Upload it to NexaCart before creating the product.");
+    setMessage(
+      "Image selected. Upload it to NexaCart before creating the product.",
+    );
   };
 
   fileInput.addEventListener("change", () => selectFile(fileInput.files[0]));
@@ -314,7 +410,9 @@ function initializeProductAdmin() {
     event.preventDefault();
     dropzone.classList.add("is-dragging");
   });
-  dropzone.addEventListener("dragleave", () => dropzone.classList.remove("is-dragging"));
+  dropzone.addEventListener("dragleave", () =>
+    dropzone.classList.remove("is-dragging"),
+  );
   dropzone.addEventListener("drop", (event) => {
     event.preventDefault();
     dropzone.classList.remove("is-dragging");
@@ -337,26 +435,31 @@ function initializeProductAdmin() {
       setMessage(error.message);
     } finally {
       uploadButton.disabled = Boolean(imageUrlInput.value);
-      uploadButton.textContent = imageUrlInput.value ? "Image uploaded" : "Upload image";
+      uploadButton.textContent = imageUrlInput.value
+        ? "Image uploaded"
+        : "Upload image";
     }
   });
 
-  document.getElementById("remove-image-button").addEventListener("click", () => {
-    selectedFile = null;
-    fileInput.value = "";
-    imageUrlInput.value = "";
-    preview.hidden = true;
-    submitButton.disabled = true;
-    uploadButton.disabled = true;
-    uploadButton.textContent = "Upload image";
-    if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
-    previewObjectUrl = null;
-    setMessage("Choose an image to continue.");
-  });
+  document
+    .getElementById("remove-image-button")
+    .addEventListener("click", () => {
+      selectedFile = null;
+      fileInput.value = "";
+      imageUrlInput.value = "";
+      preview.hidden = true;
+      submitButton.disabled = true;
+      uploadButton.disabled = true;
+      uploadButton.textContent = "Upload image";
+      if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+      previewObjectUrl = null;
+      setMessage("Choose an image to continue.");
+    });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!imageUrlInput.value) return setMessage("Upload a product image first.");
+    if (!imageUrlInput.value)
+      return setMessage("Upload a product image first.");
 
     submitButton.disabled = true;
     submitButton.textContent = "Creating product…";
@@ -387,7 +490,10 @@ function initializeProductAdmin() {
       if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
       previewObjectUrl = null;
       uploadButton.disabled = true;
-      setMessage(`${result.product.name} is now in the NexaCart collection.`, true);
+      setMessage(
+        `${result.product.name} is now in the NexaCart collection.`,
+        true,
+      );
     } catch (error) {
       setMessage(error.message);
     } finally {
@@ -400,37 +506,77 @@ function initializeProductAdmin() {
 document.addEventListener("click", (event) => {
   if (event.target.closest('[data-action="logout"]')) return logout();
   const category = event.target.closest("[data-category]");
-  if (category) { activeCategory = category.dataset.category; renderCategories(allProducts); renderProducts(); }
+  if (category) {
+    activeCategory = category.dataset.category;
+    renderCategories(allProducts);
+    renderProducts();
+  }
   const addButton = event.target.closest("[data-add-product]");
   if (addButton) {
-    const product = allProducts.find((entry) => String(entry._id || entry.id) === addButton.dataset.addProduct);
+    const product = allProducts.find(
+      (entry) => String(entry._id || entry.id) === addButton.dataset.addProduct,
+    );
     if (product) addToCart(product);
   }
   const cartButton = event.target.closest("[data-cart-action]");
   if (cartButton) {
     const cart = getCart();
-    const item = cart.find((entry) => String(entry.id) === cartButton.dataset.id);
+    const item = cart.find(
+      (entry) => String(entry.id) === cartButton.dataset.id,
+    );
     if (!item) return;
-    if (cartButton.dataset.cartAction === "remove" || (cartButton.dataset.cartAction === "decrease" && Number(item.quantity) <= 1)) setCart(cart.filter((entry) => entry !== item));
-    else if (cartButton.dataset.cartAction === "increase") { item.quantity = Math.min(50, Number(item.quantity) + 1); setCart(cart); }
-    else if (cartButton.dataset.cartAction === "decrease") { item.quantity = Number(item.quantity) - 1; setCart(cart); }
+    if (
+      cartButton.dataset.cartAction === "remove" ||
+      (cartButton.dataset.cartAction === "decrease" &&
+        Number(item.quantity) <= 1)
+    )
+      setCart(cart.filter((entry) => entry !== item));
+    else if (cartButton.dataset.cartAction === "increase") {
+      item.quantity = Math.min(50, Number(item.quantity) + 1);
+      setCart(cart);
+    } else if (cartButton.dataset.cartAction === "decrease") {
+      item.quantity = Number(item.quantity) - 1;
+      setCart(cart);
+    }
   }
   const detailQuantity = event.target.closest("[data-detail-quantity]");
   if (detailQuantity) {
     const output = document.getElementById("detail-quantity");
-    output.textContent = Math.min(50, Math.max(1, Number(output.textContent) + Number(detailQuantity.dataset.detailQuantity)));
+    output.textContent = Math.min(
+      50,
+      Math.max(
+        1,
+        Number(output.textContent) +
+          Number(detailQuantity.dataset.detailQuantity),
+      ),
+    );
   }
   if (event.target.closest("[data-detail-add]")) {
-    const product = JSON.parse(document.getElementById("product-detail").dataset.product || "{}");
-    addToCart(product, Number(document.getElementById("detail-quantity").textContent));
+    const product = JSON.parse(
+      document.getElementById("product-detail").dataset.product || "{}",
+    );
+    addToCart(
+      product,
+      Number(document.getElementById("detail-quantity").textContent),
+    );
   }
 });
 
-document.addEventListener("input", (event) => { if (event.target.id === "product-search") renderProducts(); });
-document.addEventListener("change", (event) => { if (event.target.id === "product-sort") renderProducts(); });
+document.addEventListener("input", (event) => {
+  if (event.target.id === "product-search") renderProducts();
+});
+document.addEventListener("change", (event) => {
+  if (event.target.id === "product-sort") renderProducts();
+});
 document.addEventListener("submit", (event) => {
-  if (event.target.matches("[data-auth-form]")) { event.preventDefault(); submitAuth(event.target); }
-  if (event.target.matches("#header-search")) { event.preventDefault(); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); }
+  if (event.target.matches("[data-auth-form]")) {
+    event.preventDefault();
+    submitAuth(event.target);
+  }
+  if (event.target.matches("#header-search")) {
+    event.preventDefault();
+    document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
+  }
 });
 document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
@@ -439,5 +585,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadProductDetail();
   renderCart();
   initializeProductAdmin();
-  document.getElementById("checkout-button")?.addEventListener("click", checkout);
+  document
+    .getElementById("checkout-button")
+    ?.addEventListener("click", checkout);
 });

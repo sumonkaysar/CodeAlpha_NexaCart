@@ -3,7 +3,12 @@ const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("../config/cloudinary");
 
-const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const allowedTypes = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+]);
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async () => ({
@@ -19,7 +24,12 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter(_req, file, callback) {
     if (!allowedTypes.has(file.mimetype)) {
-      return callback(Object.assign(new Error("Only JPG, PNG, WEBP, and GIF images are allowed"), { statusCode: 400 }));
+      return callback(
+        Object.assign(
+          new Error("Only JPG, PNG, WEBP, and GIF images are allowed"),
+          { statusCode: 400 },
+        ),
+      );
     }
     callback(null, true);
   },
@@ -28,12 +38,20 @@ const upload = multer({
 const uploadImage = (req, res, next) => {
   upload(req, res, (error) => {
     if (error) {
-      const statusCode = error.statusCode || error.http_code || (error instanceof multer.MulterError
-        ? error.code === "LIMIT_FILE_SIZE" ? 413 : 400
-        : 502);
-      return res.status(statusCode).json({ error: error.message || "Image upload failed" });
+      const statusCode =
+        error.statusCode ||
+        error.http_code ||
+        (error instanceof multer.MulterError
+          ? error.code === "LIMIT_FILE_SIZE"
+            ? 413
+            : 400
+          : 502);
+      return res
+        .status(statusCode)
+        .json({ error: error.message || "Image upload failed" });
     }
-    if (!req.file) return res.status(400).json({ error: "Choose an image to upload" });
+    if (!req.file)
+      return res.status(400).json({ error: "Choose an image to upload" });
     next();
   });
 };

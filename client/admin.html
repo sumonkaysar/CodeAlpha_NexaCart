@@ -8,15 +8,35 @@
     <link rel="stylesheet" href="css/storefront.css" />
   </head>
   <body>
-    <div class="announcement"><strong>NexaCart Studio</strong><span>Product management</span></div>
+    <div class="announcement">
+      <strong>NexaCart Studio</strong><span>Product management</span>
+    </div>
     <header class="site-header">
-      <a class="brand" href="index.html" aria-label="NexaCart home">Nexa<span class="brand-mark">Cart</span></a>
-      <nav class="main-nav" aria-label="Main navigation"><a href="index.html#shop">Shop</a><a href="admin.html" aria-current="page">Manage</a></nav>
-      <div class="header-actions"><div id="user-nav" class="account-actions"><a href="login.html">Sign in</a></div><a class="cart-link" href="cart.html">Bag <span>(<span id="cart-count">0</span>)</span></a></div>
+      <a class="brand" href="index.html" aria-label="NexaCart home"
+        >Nexa<span class="brand-mark">Cart</span></a
+      >
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="index.html#shop">Shop</a
+        ><a href="admin.html" aria-current="page">Manage</a>
+      </nav>
+      <div class="header-actions">
+        <div id="user-nav" class="account-actions">
+          <a href="login.html">Sign in</a>
+        </div>
+        <a class="cart-link" href="cart.html"
+          >Bag <span>(<span id="cart-count">0</span>)</span></a
+        >
+      </div>
     </header>
     <main class="page-shell admin-page">
       <a class="back-link" href="index.html#shop">← Back to the collection</a>
-      <div class="section-heading"><div><p class="eyebrow">NexaCart Studio</p><h1 class="page-title">Add a product</h1><p>Bring a considered new object into the collection.</p></div></div>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">NexaCart Studio</p>
+          <h1 class="page-title">Add a product</h1>
+          <p>Bring a considered new object into the collection.</p>
+        </div>
+      </div>
       <section class="empty-state admin-access" id="admin-access" hidden>
         <h2>Administrator access required</h2>
         <p>Sign in with an administrator account to add products.</p>
@@ -25,32 +45,134 @@
       <div class="admin-layout" id="admin-workspace" hidden>
         <form class="admin-panel admin-form" id="product-form">
           <div class="admin-fields">
-            <div class="field"><label for="product-name">Product name</label><input id="product-name" name="name" type="text" placeholder="Studio Wireless Headphones" minlength="2" required /></div>
-            <div class="field"><label for="product-price">Price (USD)</label><input id="product-price" name="price" type="number" min="0.01" step="0.01" placeholder="189.00" required /></div>
-            <div class="field"><label for="product-category">Category</label><input id="product-category" name="category" type="text" placeholder="Audio" required /></div>
-            <label class="featured-toggle"><input name="featured" type="checkbox" /><span>Feature this product in the collection</span></label>
-            <div class="field admin-field-wide"><label for="product-description">Description</label><textarea id="product-description" name="description" rows="4" placeholder="What makes this object worth keeping?" maxlength="1000"></textarea></div>
+            <div class="field">
+              <label for="product-name">Product name</label
+              ><input
+                id="product-name"
+                name="name"
+                type="text"
+                placeholder="Studio Wireless Headphones"
+                minlength="2"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="product-price">Price (USD)</label
+              ><input
+                id="product-price"
+                name="price"
+                type="number"
+                min="0.01"
+                step="0.01"
+                placeholder="189.00"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="product-category">Category</label
+              ><input
+                id="product-category"
+                name="category"
+                type="text"
+                placeholder="Audio"
+                required
+              />
+            </div>
+            <label class="featured-toggle"
+              ><input name="featured" type="checkbox" /><span
+                >Feature this product in the collection</span
+              ></label
+            >
+            <div class="field admin-field-wide">
+              <label for="product-description">Description</label
+              ><textarea
+                id="product-description"
+                name="description"
+                rows="4"
+                placeholder="What makes this object worth keeping?"
+                maxlength="1000"
+              ></textarea>
+            </div>
           </div>
           <div class="upload-section">
-            <div><p class="eyebrow">Product image</p><p class="upload-hint">JPG, PNG, WEBP, or GIF. Up to 5 MB.</p></div>
-            <label class="upload-dropzone" id="image-dropzone" for="product-image">
-              <input id="product-image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
-              <span class="upload-plus" aria-hidden="true">+</span><span><strong>Choose an image</strong><small>or drop it here</small></span>
+            <div>
+              <p class="eyebrow">Product image</p>
+              <p class="upload-hint">JPG, PNG, WEBP, or GIF. Up to 5 MB.</p>
+            </div>
+            <label
+              class="upload-dropzone"
+              id="image-dropzone"
+              for="product-image"
+            >
+              <input
+                id="product-image"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+              />
+              <span class="upload-plus" aria-hidden="true">+</span
+              ><span
+                ><strong>Choose an image</strong
+                ><small>or drop it here</small></span
+              >
             </label>
-            <div class="uploaded-image-preview" id="uploaded-image-preview" hidden>
+            <div
+              class="uploaded-image-preview"
+              id="uploaded-image-preview"
+              hidden
+            >
               <img id="preview-image" alt="Selected product preview" />
-              <div class="preview-meta"><span id="preview-name"></span><button class="remove-button" id="remove-image-button" type="button">Remove image</button></div>
+              <div class="preview-meta">
+                <span id="preview-name"></span
+                ><button
+                  class="remove-button"
+                  id="remove-image-button"
+                  type="button"
+                >
+                  Remove image
+                </button>
+              </div>
             </div>
             <input id="uploaded-image-url" type="hidden" />
-            <button class="button button-light" id="upload-image-button" type="button" disabled>Upload image</button>
-            <p class="form-message" id="product-form-message" role="status" aria-live="polite"></p>
+            <button
+              class="button button-light"
+              id="upload-image-button"
+              type="button"
+              disabled
+            >
+              Upload image
+            </button>
+            <p
+              class="form-message"
+              id="product-form-message"
+              role="status"
+              aria-live="polite"
+            ></p>
           </div>
-          <button class="button button-wide" id="save-product-button" type="submit" disabled>Create product <span aria-hidden="true">→</span></button>
+          <button
+            class="button button-wide"
+            id="save-product-button"
+            type="submit"
+            disabled
+          >
+            Create product <span aria-hidden="true">→</span>
+          </button>
         </form>
-        <aside class="admin-side-note"><p class="eyebrow">Image hosting</p><h2>One image link. Ready everywhere.</h2><p>Upload once and NexaCart stores the Cloudinary URL with the product, ready for product details and the storefront.</p><a href="index.html#shop">View the live collection ↗</a></aside>
+        <aside class="admin-side-note">
+          <p class="eyebrow">Image hosting</p>
+          <h2>One image link. Ready everywhere.</h2>
+          <p>
+            Upload once and NexaCart stores the Cloudinary URL with the product,
+            ready for product details and the storefront.
+          </p>
+          <a href="index.html#shop">View the live collection ↗</a>
+        </aside>
       </div>
     </main>
-    <footer class="site-footer"><strong>Nexa<span class="brand-mark">Cart</span></strong><span>Thoughtful things for the everyday.</span><span>© 2026 NexaCart</span></footer>
+    <footer class="site-footer">
+      <strong>Nexa<span class="brand-mark">Cart</span></strong
+      ><span>Thoughtful things for the everyday.</span
+      ><span>© 2026 NexaCart</span>
+    </footer>
     <script src="js/store.js"></script>
   </body>
 </html>

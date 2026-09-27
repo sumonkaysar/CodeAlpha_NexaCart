@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f7f3" />
-    <title>Add a product | NexaCart</title>
+    <title>Manage products | NexaCart</title>
     <link rel="stylesheet" href="css/storefront.css" />
   </head>
   <body>
@@ -33,8 +33,10 @@
       <div class="section-heading">
         <div>
           <p class="eyebrow">NexaCart Studio</p>
-          <h1 class="page-title">Add a product</h1>
-          <p>Bring a considered new object into the collection.</p>
+          <h1 class="page-title">Manage products</h1>
+          <p>
+            Create, update, archive, and permanently remove collection items.
+          </p>
         </div>
       </div>
       <section class="empty-state admin-access" id="admin-access" hidden>
@@ -44,6 +46,20 @@
       </section>
       <div class="admin-layout" id="admin-workspace" hidden>
         <form class="admin-panel admin-form" id="product-form">
+          <div class="admin-form-heading">
+            <div>
+              <p class="eyebrow">Product editor</p>
+              <h2 id="product-form-title">Add a product</h2>
+            </div>
+            <button
+              class="text-button"
+              id="cancel-edit-button"
+              type="button"
+              hidden
+            >
+              Cancel edit
+            </button>
+          </div>
           <div class="admin-fields">
             <div class="field">
               <label for="product-name">Product name</label
@@ -167,6 +183,60 @@
           <a href="index.html#shop">View the live collection ↗</a>
         </aside>
       </div>
+      <section class="inventory-section" id="inventory-section" hidden>
+        <div class="section-heading inventory-heading">
+          <div>
+            <p class="eyebrow">Catalog</p>
+            <h2>Product inventory</h2>
+            <p>
+              Archived products stay out of the storefront and can be restored
+              any time.
+            </p>
+          </div>
+          <label class="inventory-search" for="admin-product-search">
+            <span>Find a product</span>
+            <input
+              id="admin-product-search"
+              type="search"
+              placeholder="Name or category"
+            />
+          </label>
+        </div>
+        <div class="inventory-toolbar">
+          <div
+            class="inventory-tabs"
+            role="tablist"
+            aria-label="Product status"
+          >
+            <button
+              class="filter-button is-active"
+              type="button"
+              data-inventory-view="active"
+              role="tab"
+              aria-selected="true"
+            >
+              Active
+            </button>
+            <button
+              class="filter-button"
+              type="button"
+              data-inventory-view="archived"
+              role="tab"
+              aria-selected="false"
+            >
+              Archived
+            </button>
+          </div>
+          <span
+            class="catalog-meta"
+            id="admin-product-count"
+            aria-live="polite"
+          ></span>
+        </div>
+        <div class="inventory-list" id="admin-products" aria-live="polite">
+          <p class="loading-state">Loading products…</p>
+        </div>
+      </section>
     </main>
     <footer class="site-footer">
       <strong>Nexa<span class="brand-mark">Cart</span></strong

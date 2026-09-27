@@ -355,6 +355,8 @@ function initializeProductAdmin() {
     return;
   }
   workspace.hidden = false;
+  const inventory = document.getElementById("inventory-section");
+  inventory.hidden = false;
 
   const fileInput = document.getElementById("product-image");
   const uploadButton = document.getElementById("upload-image-button");
@@ -365,13 +367,191 @@ function initializeProductAdmin() {
   const previewName = document.getElementById("preview-name");
   const dropzone = document.getElementById("image-dropzone");
   const message = document.getElementById("product-form-message");
+  const formTitle = document.getElementById("product-form-title");
+  const cancelEditButton = document.getElementById("cancel-edit-button");
+  const productList = document.getElementById("admin-products");
+  const productCount = document.getElementById("admin-product-count");
   let selectedFile = null;
   let previewObjectUrl = null;
+  let editingProductId = null;
+  let inventoryProducts = [];
+  let inventoryView = "active";
 
   const setMessage = (text, success = false) => {
     message.textContent = text;
     message.classList.toggle("is-success", success);
   };
+
+  const adminFetchJSON = (url, options = {}) =>
+    fetchJSON(url, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...options.headers,
+      },
+    });
+
+  const renderInventory = () => {
+    const search = document
+      .getElementById("admin-product-search")
+      .value.trim()
+      .toLowerCase();
+    const showArchived = inventoryView === "archived";
+    const products = inventoryProducts.filter((product) => {
+      const matchesStatus = Boolean(product.deletedAt) === showArchived;
+      const matchesSearch = `${product.name} ${product.category || ""}`
+        .toLowerCase()
+        .includes(search);
+      return matchesStatus && matchesSearch;
+    });
+
+    productCount.textContent = `${products.length} ${products.length === 1 ? "product" : "products"}`;
+    if (!products.length) {
+      const heading = search
+        ? "No matching products"
+        : showArchived
+          ? "No archived products"
+          : "No products yet";
+      const detail = search
+        ? "Try another product name or category."
+        : showArchived
+          ? "Archived products will appear here."
+          : "Create your first product above.";
+      productList.innerHTML = `<div class="empty-state"><h3>${heading}</h3><p>${detail}</p></div>`;
+      return;
+    }
+
+    productList.innerHTML = products
+      .map((product) => {
+        const id = escapeHTML(product._id);
+        const isArchived = Boolean(product.deletedAt);
+        const stateAction = isArchived
+          ? `<button class="inventory-action" type="button" data-product-action="restore" data-id="${id}">Restore</button>`
+          : `<button class="inventory-action" type="button" data-product-action="archive" data-id="${id}">Archive</button>`;
+        return `<article class="inventory-row${isArchived ? " is-archived" : ""}">
+          <img class="inventory-image" src="${escapeHTML(safeImage(product.image))}" alt="" loading="lazy">
+          <div class="inventory-product"><strong>${escapeHTML(product.name)}</strong><span>${escapeHTML(product.category || "Uncategorized")}${product.featured ? " · Featured" : ""}</span></div>
+          <span class="inventory-price">${money(product.price)}</span>
+          <span class="inventory-status">${isArchived ? "Archived" : "Active"}</span>
+          <div class="inventory-actions">
+            <button class="inventory-action" type="button" data-product-action="edit" data-id="${id}">Edit</button>
+            ${stateAction}
+            <button class="inventory-action is-destructive" type="button" data-product-action="delete" data-id="${id}">Delete permanently</button>
+          </div>
+        </article>`;
+      })
+      .join("");
+  };
+
+  const loadAdminProducts = async () => {
+    productList.innerHTML = '<p class="loading-state">Loading products…</p>';
+    try {
+      inventoryProducts = await adminFetchJSON(
+        `${API_BASE_URL}/products/admin`,
+      );
+      renderInventory();
+    } catch (error) {
+      productList.innerHTML = `<div class="empty-state"><h3>Products could not be loaded</h3><p>${escapeHTML(error.message)}</p></div>`;
+    }
+  };
+
+  const resetProductForm = () => {
+    form.reset();
+    fileInput.value = "";
+    imageUrlInput.value = "";
+    preview.hidden = true;
+    selectedFile = null;
+    editingProductId = null;
+    submitButton.disabled = true;
+    submitButton.textContent = "Create product";
+    formTitle.textContent = "Add a product";
+    cancelEditButton.hidden = true;
+    uploadButton.disabled = true;
+    uploadButton.textContent = "Upload image";
+    if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+    previewObjectUrl = null;
+  };
+
+  const startEditing = (product) => {
+    editingProductId = String(product._id);
+    form.elements.name.value = product.name || "";
+    form.elements.price.value = product.price ?? "";
+    form.elements.category.value = product.category || "";
+    form.elements.description.value = product.description || "";
+    form.elements.featured.checked = Boolean(product.featured);
+    fileInput.value = "";
+    selectedFile = null;
+    imageUrlInput.value = product.image || "";
+    uploadButton.disabled = true;
+    uploadButton.textContent = "Upload image";
+    preview.hidden = !product.image;
+    if (product.image) {
+      previewImage.src = safeImage(product.image);
+      previewName.textContent = "Current product image";
+    }
+    if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+    previewObjectUrl = null;
+    formTitle.textContent = "Edit product";
+    submitButton.disabled = false;
+    submitButton.textContent = "Save changes";
+    cancelEditButton.hidden = false;
+    setMessage("");
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  productList.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-product-action]");
+    if (!button) return;
+    const product = inventoryProducts.find(
+      (entry) => String(entry._id) === button.dataset.id,
+    );
+    if (!product) return;
+
+    if (button.dataset.productAction === "edit") return startEditing(product);
+    if (
+      button.dataset.productAction === "delete" &&
+      !window.confirm(
+        `Permanently delete “${product.name}”? This cannot be undone.`,
+      )
+    )
+      return;
+
+    const action = button.dataset.productAction;
+    const endpoint =
+      action === "archive"
+        ? `${API_BASE_URL}/products/${encodeURIComponent(product._id)}/soft-delete`
+        : action === "restore"
+          ? `${API_BASE_URL}/products/${encodeURIComponent(product._id)}/restore`
+          : `${API_BASE_URL}/products/${encodeURIComponent(product._id)}`;
+    button.disabled = true;
+    try {
+      await adminFetchJSON(endpoint, {
+        method: action === "delete" ? "DELETE" : "PATCH",
+      });
+      if (editingProductId === String(product._id)) resetProductForm();
+      await loadAdminProducts();
+    } catch (error) {
+      button.disabled = false;
+      showToast(error.message);
+    }
+  });
+
+  document
+    .getElementById("admin-product-search")
+    .addEventListener("input", renderInventory);
+  document.querySelectorAll("[data-inventory-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      inventoryView = button.dataset.inventoryView;
+      document.querySelectorAll("[data-inventory-view]").forEach((tab) => {
+        const selected = tab === button;
+        tab.classList.toggle("is-active", selected);
+        tab.setAttribute("aria-selected", String(selected));
+      });
+      renderInventory();
+    });
+  });
+  cancelEditButton.addEventListener("click", resetProductForm);
+  loadAdminProducts();
 
   const selectFile = (file) => {
     if (!file) return;
@@ -401,7 +581,7 @@ function initializeProductAdmin() {
     previewObjectUrl = URL.createObjectURL(file);
     previewImage.src = previewObjectUrl;
     setMessage(
-      "Image selected. Upload it to NexaCart before creating the product.",
+      `Image selected. Upload it before ${editingProductId ? "saving changes" : "creating the product"}.`,
     );
   };
 
@@ -448,7 +628,7 @@ function initializeProductAdmin() {
       fileInput.value = "";
       imageUrlInput.value = "";
       preview.hidden = true;
-      submitButton.disabled = true;
+      submitButton.disabled = !editingProductId;
       uploadButton.disabled = true;
       uploadButton.textContent = "Upload image";
       if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
@@ -458,11 +638,14 @@ function initializeProductAdmin() {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!imageUrlInput.value)
+    const isEditing = Boolean(editingProductId);
+    if (!isEditing && !imageUrlInput.value)
       return setMessage("Upload a product image first.");
 
     submitButton.disabled = true;
-    submitButton.textContent = "Creating product…";
+    submitButton.textContent = isEditing
+      ? "Saving changes…"
+      : "Creating product…";
     setMessage("");
     const product = {
       name: form.elements.name.value.trim(),
@@ -474,31 +657,31 @@ function initializeProductAdmin() {
     };
 
     try {
-      const result = await fetchJSON(`${API_BASE_URL}/products`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const result = await adminFetchJSON(
+        isEditing
+          ? `${API_BASE_URL}/products/${encodeURIComponent(editingProductId)}`
+          : `${API_BASE_URL}/products`,
+        {
+          method: isEditing ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(product),
         },
-        body: JSON.stringify(product),
-      });
-      form.reset();
-      fileInput.value = "";
-      imageUrlInput.value = "";
-      preview.hidden = true;
-      selectedFile = null;
-      if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
-      previewObjectUrl = null;
-      uploadButton.disabled = true;
+      );
+      resetProductForm();
+      await loadAdminProducts();
       setMessage(
-        `${result.product.name} is now in the NexaCart collection.`,
+        isEditing
+          ? `${result.product.name} was updated.`
+          : `${result.product.name} is now in the NexaCart collection.`,
         true,
       );
     } catch (error) {
       setMessage(error.message);
     } finally {
-      submitButton.disabled = true;
-      submitButton.textContent = "Create product";
+      if (!editingProductId) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Create product";
+      }
     }
   });
 }

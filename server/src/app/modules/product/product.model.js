@@ -23,6 +23,10 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
 });
 
 const Product = mongoose.model("Product", productSchema);

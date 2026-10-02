@@ -1,4 +1,10 @@
 document.addEventListener("click", (event) => {
+  if (event.target.closest("[data-demo-credentials]")) {
+    document.getElementById("email").value = "admin@example.com";
+    document.getElementById("password").value = "Admin@12345";
+    return;
+  }
+
   if (event.target.closest('[data-action="logout"]')) return logout();
 
   const category = event.target.closest("[data-category]");

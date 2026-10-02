@@ -5,6 +5,8 @@ const AuthRouter = require("./app/modules/auth/auth.route");
 const ProductRouter = require("./app/modules/product/product.route");
 const OrderRouter = require("./app/modules/order/order.route");
 const UploadRouter = require("./app/modules/upload/upload.route");
+const notFoundMiddleware = require("./app/middlewares/notFoundMiddleware");
+const errorHandlerMiddleware = require("./app/middlewares/errorHandlerMiddleware");
 
 const app = express();
 
@@ -21,5 +23,8 @@ app.get("/", (_req, res) => {
     message: "NexaCart server is on: 😎",
   });
 });
+
+app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
 module.exports = app;

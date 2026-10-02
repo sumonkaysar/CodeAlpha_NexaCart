@@ -68,6 +68,9 @@ async function checkout() {
     document.getElementById("cart-success").innerHTML =
       `<div class="empty-state"><p class="eyebrow">Order confirmed</p><h3>Thank you for your order.</h3><p>Confirmation ${escapeHTML(data.orderId)} is now being prepared.</p><a class="button" href="index.html#shop">Continue shopping</a></div>`;
 
+    document.getElementById("cart-success").hidden = false;
+
+    document.getElementById("cart-items").hidden = true;
     document.getElementById("cart-summary").hidden = true;
   } catch (error) {
     message.textContent = error.message;

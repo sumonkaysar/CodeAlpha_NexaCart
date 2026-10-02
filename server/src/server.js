@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const app = require("./app");
 const connectDB = require("./app/config/db");
 const seedAdmin = require("./app/utils/seedAdmin");
@@ -8,16 +9,15 @@ const PORT = process.env.PORT || 5000;
 
 const main = async () => {
   try {
-    console.log("check");
     await connectDB();
     await seedAdmin();
     await seedProducts();
 
     app.listen(PORT, () => {
-      console.log(`Server is on port ${PORT}`);
+      console.log(`Server is running on port ${PORT}`);
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.error("Server startup failed:", error);
     process.exit(1);
   }
 };

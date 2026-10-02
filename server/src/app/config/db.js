@@ -10,8 +10,8 @@ const connectDB = async () => {
     console.log("MongoDB Connected via Mongoose");
     console.log("Ready state:", mongoose.connection.readyState);
   } catch (err) {
-    console.error("MongoDB Connection Error:", err.message);
-    process.exit(1);
+    console.error("MongoDB connection failed:", error);
+    throw error;
   }
 };
 

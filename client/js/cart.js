@@ -6,9 +6,11 @@ function renderCart() {
   const summary = document.getElementById("cart-summary");
 
   if (!cart.length) {
-    container.innerHTML =
+    document.getElementById("cart-success").innerHTML =
       '<div class="empty-state"><h3>Your bag is taking a breather</h3><p>Find something considered for your everyday.</p><a class="button" href="index.html#shop">Explore the collection</a></div>';
+
     if (summary) summary.hidden = true;
+    document.getElementById("cart-items").hidden = true;
     return;
   }
 
@@ -67,8 +69,6 @@ async function checkout() {
 
     document.getElementById("cart-success").innerHTML =
       `<div class="empty-state"><p class="eyebrow">Order confirmed</p><h3>Thank you for your order.</h3><p>Confirmation ${escapeHTML(data.orderId)} is now being prepared.</p><a class="button" href="index.html#shop">Continue shopping</a></div>`;
-
-    document.getElementById("cart-success").hidden = false;
 
     document.getElementById("cart-items").hidden = true;
     document.getElementById("cart-summary").hidden = true;

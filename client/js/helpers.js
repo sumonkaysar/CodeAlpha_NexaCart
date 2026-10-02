@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://nexacart-server.vercel.app/api";
 const CART_KEY = "nexacart_cart";
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=1200&q=80";

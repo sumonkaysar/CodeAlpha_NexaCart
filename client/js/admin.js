@@ -178,9 +178,9 @@ function initializeProductAdmin() {
 
     if (
       button.dataset.productAction === "delete" &&
-      !window.confirm(
+      !(await showConfirm(
         `Permanently delete “${product.name}”? This cannot be undone.`,
-      )
+      ))
     )
       return;
 

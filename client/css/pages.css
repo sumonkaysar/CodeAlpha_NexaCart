@@ -95,6 +95,9 @@
   align-items: start;
   margin-top: 32px;
 }
+.cart-success {
+  margin-top: 32px;
+}
 .cart-lines {
   border-top: 1px solid var(--line);
 }

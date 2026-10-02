@@ -40,27 +40,33 @@ const register = async ({ username, email, password }) => {
 };
 
 const login = async ({ email, password }) => {
-  if (
-    typeof email !== "string" ||
-    !email.trim() ||
-    typeof password !== "string"
-  ) {
-    throw createError("Email and password are required", 400);
+  try {
+    if (
+      typeof email !== "string" ||
+      !email.trim() ||
+      typeof password !== "string"
+    ) {
+      throw createError("Email and password are required", 400);
+    }
+
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
+    if (!user) throw createError("Invalid email or password", 400);
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) throw createError("Invalid email or password", 400);
+
+    const token = jwt.sign(
+      { id: user._id, username: user.username, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" },
+    );
+
+    return { token, username: user.username, role: user.role };
+  } catch (error) {
+    console.log(error);
+    if (error.statusCode) throw error;
+    throw createError("Invalid email or password", 400);
   }
-
-  const user = await User.findOne({ email: email.trim().toLowerCase() });
-  if (!user) throw createError("Invalid email or password", 400);
-
-  const isValid = await bcrypt.compare(password, user.password);
-  if (!isValid) throw createError("Invalid email or password", 400);
-
-  const token = jwt.sign(
-    { id: user._id, username: user.username, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: "2h" },
-  );
-
-  return { token, username: user.username, role: user.role };
 };
 
 module.exports = { register, login };

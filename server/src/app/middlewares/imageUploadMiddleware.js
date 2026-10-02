@@ -9,6 +9,7 @@ const allowedTypes = new Set([
   "image/webp",
   "image/gif",
 ]);
+
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async () => ({
@@ -50,6 +51,7 @@ const uploadImage = (req, res, next) => {
         .status(statusCode)
         .json({ error: error.message || "Image upload failed" });
     }
+
     if (!req.file)
       return res.status(400).json({ error: "Choose an image to upload" });
     next();

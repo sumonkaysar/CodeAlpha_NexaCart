@@ -12,8 +12,11 @@ const getAdminProducts = () => Product.find().sort({ deletedAt: 1, name: 1 });
 const getProductById = async (id) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     throw createError("Invalid product id", 400);
+
   const product = await Product.findOne({ _id: id, deletedAt: null });
+
   if (!product) throw createError("Product not found", 404);
+
   return product;
 };
 
@@ -26,6 +29,7 @@ const createProduct = async ({
   featured,
 }) => {
   const parsedPrice = Number(price);
+
   if (
     typeof name !== "string" ||
     !name.trim() ||
@@ -50,37 +54,44 @@ const updateProduct = async (id, values) => {
     throw createError("Invalid product id", 400);
 
   const updates = {};
+
   if (values.name !== undefined) {
     if (typeof values.name !== "string" || !values.name.trim())
       throw createError("Product name cannot be empty", 400);
     updates.name = values.name.trim();
   }
+
   if (values.price !== undefined) {
     const price = Number(values.price);
     if (!Number.isFinite(price) || price <= 0)
       throw createError("Price must be a positive number", 400);
     updates.price = price;
   }
+
   if (values.description !== undefined) {
     if (typeof values.description !== "string")
       throw createError("Description must be text", 400);
     updates.description = values.description.trim();
   }
+
   if (values.category !== undefined) {
     if (typeof values.category !== "string" || !values.category.trim())
       throw createError("Category cannot be empty", 400);
     updates.category = values.category.trim();
   }
+
   if (values.image !== undefined) {
     if (typeof values.image !== "string")
       throw createError("Image URL must be text", 400);
     updates.image = values.image.trim();
   }
+
   if (values.featured !== undefined) {
     if (typeof values.featured !== "boolean")
       throw createError("Featured must be a boolean", 400);
     updates.featured = values.featured;
   }
+
   if (!Object.keys(updates).length)
     throw createError("Provide at least one product field to update", 400);
 
@@ -89,19 +100,24 @@ const updateProduct = async (id, values) => {
     { $set: updates },
     { new: true, runValidators: true },
   );
+
   if (!product) throw createError("Product not found", 404);
+
   return product;
 };
 
 const setProductDeletedAt = async (id, deletedAt) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     throw createError("Invalid product id", 400);
+
   const product = await Product.findByIdAndUpdate(
     id,
     { $set: { deletedAt } },
     { new: true },
   );
+
   if (!product) throw createError("Product not found", 404);
+
   return product;
 };
 
@@ -111,8 +127,11 @@ const restoreProduct = (id) => setProductDeletedAt(id, null);
 const hardDeleteProduct = async (id) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     throw createError("Invalid product id", 400);
+
   const product = await Product.findByIdAndDelete(id);
+
   if (!product) throw createError("Product not found", 404);
+
   return product;
 };
 

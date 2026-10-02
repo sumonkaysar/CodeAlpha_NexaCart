@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "nexacart-server",
   "version": "1.0.0",
   "description": "NexaCart Modular Express Backend",
   "main": "server.js",

@@ -9,12 +9,14 @@ const register = async ({ username, email, password }) => {
   if (typeof username !== "string" || username.trim().length < 2) {
     throw createError("Name must be at least 2 characters", 400);
   }
+
   if (
     typeof email !== "string" ||
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
   ) {
     throw createError("Enter a valid email address", 400);
   }
+
   if (typeof password !== "string" || password.length < 8) {
     throw createError("Password must be at least 8 characters", 400);
   }
@@ -25,11 +27,14 @@ const register = async ({ username, email, password }) => {
       email: email.trim().toLowerCase(),
       password: await bcrypt.hash(password, 10),
     });
+
     await user.save();
+
     return { message: "User registered successfully" };
   } catch (error) {
     if (error.code === 11000)
       throw createError("Username or email already exists", 400);
+
     throw error;
   }
 };
@@ -54,6 +59,7 @@ const login = async ({ email, password }) => {
     process.env.JWT_SECRET,
     { expiresIn: "2h" },
   );
+
   return { token, username: user.username, role: user.role };
 };
 

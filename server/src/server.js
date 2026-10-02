@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 5000;
 
 const main = async () => {
   try {
+    console.log("check");
     await connectDB();
     await seedAdmin();
     await seedProducts();
@@ -21,6 +22,4 @@ const main = async () => {
   }
 };
 
-(async () => {
-  await main();
-})();
+main();
